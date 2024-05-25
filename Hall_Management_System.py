@@ -30,7 +30,12 @@ class Hall:
     @staticmethod
     def book_seats():
         while True:
-            show_id = int(input("Enter show id to book tickets: "))
+            try:
+                show_id = int(input("Enter show id to book tickets: "))
+            except ValueError:
+                print("\tInvalid value. Please enter integer value")
+                continue
+            
             match = False
             for hall in Star_Cinema.hall_list:
                 if show_id in hall.seats:
@@ -38,56 +43,95 @@ class Hall:
                     break
             if not match:
                 print(f"\tShow id '{show_id}' does not exist")
-                option_1 = input("Enter correct show id or check by going to 'View All Show Today'.Continue or back?(C/B): ")
-                if option_1 == 'C' or option_1 == 'c':
-                    continue
-                if option_1 == 'B' or option_1 == 'b':
-                    return
+                while True:
+                    option_1 = input("Enter correct show id or check by going to 'View All Show Today'.Continue or back?(C/B): ")
+                    if option_1 == 'C' or option_1 == 'c':
+                        break
+                    elif option_1 == 'B' or option_1 == 'b':
+                        return
+                    else:
+                        print(f"'{option_1}' is an invalid command!")
+                continue
+
             book_seat = []
-            row = int(input("Enter the row number: "))
-            col = int(input("Enter the column number: "))
+            try:
+                row = int(input("Enter the row number: "))
+            except ValueError:
+                print("\tInvalid value. Please enter an integer value")
+                continue
+            if row < 0 or row >= hall.row:
+                print(f"\tThis '{row}' does not exist.")
+                continue  
+            try:    
+                col = int(input("Enter the column number: "))
+            except ValueError:
+                print("\tInvalid value. Please enter an integer value")
+                continue
+                
             book_seat.append((row, col))
             for hall in Star_Cinema.hall_list:
                 if hall.seats.get(show_id):
                     for (row, col) in book_seat:
+
                         if row < 0 or row >= hall.row or col < 0 or col >= hall.col:
                             print(f"\tSeat at row {row}, column {col} does not exist.")
-                            option_1 = input("Enter correct show id or check by going to 'View All Show Today'.Continue or back?(C/B): ")
-                            if option_1 == 'C' or option_1 == 'c':
-                                continue
-                            if option_1 == 'B' or option_1 == 'b':
-                                return
+                            while True:
+                                option_2 = input("Enter correct row and column or check by going to 'View Available Seats'.Continue or back?(C/B): ")
+                                if option_2 == 'C' or option_2 == 'c':
+                                    break
+                                elif option_2 == 'B' or option_2 == 'b':
+                                    return
+                                else:
+                                    print(f"\t'{option_2}' is an invalid command!")
+                            continue
+                        
                         elif hall.seats[show_id][row][col] == 1:
                             print(f"\tThe seat at row {row}, column {col} is already booked.")
-                            option_1 = input("Choose an available seat or check by going to 'View Available Seats'.Continue or back?(C/B): ")
-                            if option_1 == 'C' or option_1 == 'c':
-                                continue
-                            if option_1 == 'B' or option_1 == 'b':
-                                return
+                            while True:
+                                option_3 = input("Choose an available seat or check by going to 'View Available Seats'.Continue or back?(C/B): ")
+                                if option_3 == 'C' or option_3 == 'c':
+                                    break
+                                elif option_3 == 'B' or option_3 == 'b':
+                                    return
+                                else:
+                                    print(f"\t'{option_3}' is an invalid command!")
+                            continue
+                        
                         else:
                             hall.seats[show_id][row][col] = 1
                             print(f"\tSeat at position ({row}, {col}) successfully booked")
-                            option_2 = input("Do you want to buy more tickets? (Y/N): ")
-                            if option_2 == 'Y' or option_2 == 'y':
-                                continue
-                            if option_2 == 'N' or option_2 == 'n':
-                                return
-    
+                            while True:
+                                option_4 = input("Do you want to buy more tickets? (Y/N): ")
+                                if option_4 == 'Y' or option_4 == 'y':
+                                    break
+                                elif option_4 == 'N' or option_4 == 'n':
+                                    return
+                                else:
+                                    print(f"\t'{option_4}' is an invalid command!")
+                            continue
+                                            
     @staticmethod
     def view_available_seats():
-        show_id = int(input("Enter the show id to view available seat: "))
-        match = False
-        for hall in Star_Cinema.hall_list:
-            if show_id in hall.seats:
-                match = True
-                seats = hall.seats[show_id]
-                print(f"\nAvailable seats for show {show_id}:")
-                for row in range(hall.row):
-                    for col in range(hall.col):
-                        print(seats[row][col], end=' ')    
-                    print()
-        if not match:
-            print(f"\tShow id '{show_id}' does not exist")
+        while True:
+            try:
+                show_id = int(input("Enter the show id to view available seat: "))
+            except ValueError:
+                        print("\tInvalid value. Please enter an integer value")
+                        continue
+            match = False
+            for hall in Star_Cinema.hall_list:
+                if show_id in hall.seats:
+                    match = True
+                    seats = hall.seats[show_id]
+                    print(f"\nAvailable seats for show {show_id}:")
+                    for row in range(hall.row):
+                        for col in range(hall.col):
+                            print(seats[row][col], end=' ')    
+                        print()
+            if not match:
+                print(f"\tShow id '{show_id}' does not exist")
+            else:
+                break
 
 hall_one = Hall(row=5, col=10, hall_no=1)
 hall_two = Hall(row=6, col=8, hall_no=2)
@@ -101,8 +145,11 @@ while True:
     print("2 : View available seats")
     print("3 : Book Ticket")
     print("4 : Exit")
-    
-    choice = int(input("Enter Option: "))
+    try:
+        choice = int(input("Enter Option: "))
+    except ValueError:
+        print("\tInvalid value. Please enter an interger value")
+        continue
 
     if choice == 1:
         print("\nCurrently running shows:")
